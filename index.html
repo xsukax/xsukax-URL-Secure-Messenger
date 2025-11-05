@@ -47,9 +47,14 @@
                 </div>
             </div>
 
-            <button id="new-msg-btn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                Create New Message
-            </button>
+            <div class="flex gap-3">
+                <a id="test-link-btn" href="#" target="_blank" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-center">
+                    Test Link
+                </a>
+                <button id="new-msg-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    Create New Message
+                </button>
+            </div>
         </div>
 
         <div id="decrypt-view" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-8">
@@ -69,9 +74,14 @@
                 <div class="bg-gray-50 border border-gray-200 rounded-md p-4 mb-4">
                     <p id="message-content" class="text-gray-900 whitespace-pre-wrap"></p>
                 </div>
-                <button id="create-new-btn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                    Create New Message
-                </button>
+                <div class="flex gap-3">
+                    <button id="download-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Download as Text File
+                    </button>
+                    <button id="create-new-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                        Create New Message
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -229,6 +239,7 @@
                 const url = `${window.location.origin}${window.location.pathname}#${encrypted}`;
                 
                 document.getElementById('encrypted-url').value = url;
+                document.getElementById('test-link-btn').href = url;
                 switchView('result-view');
                 showToast('Message encrypted successfully');
             } catch (error) {
@@ -275,6 +286,20 @@
             document.getElementById('decrypt-password').value = '';
             document.getElementById('decrypted-message').classList.add('hidden');
             switchView('encrypt-view');
+        });
+
+        document.getElementById('download-btn').addEventListener('click', () => {
+            const messageContent = document.getElementById('message-content').textContent;
+            const blob = new Blob([messageContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `decrypted-message-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Message downloaded successfully');
         });
 
         window.addEventListener('hashchange', checkHash);
