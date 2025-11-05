@@ -1,13 +1,13 @@
-# xsukax Local E2EE Messenger
+# xsukax URL Secure Messenger
 
 A privacy-focused, client-side encrypted messaging application that enables secure message exchange via AES-256 encryption embedded directly in URL hashes. No server required, no data collected—just pure end-to-end encryption in your browser.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://xsukax.github.io/xsukax-Local-E2EE-Messenger/)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://xsukax.github.io/xsukax-URL-Secure-Messenger/)
 
 ## 🔒 Project Overview
 
-**xsukax Local E2EE Messenger** is a lightweight, single-file HTML application that provides true end-to-end encryption for secure message sharing. Unlike traditional messaging platforms that rely on servers and complex infrastructure, this application performs all cryptographic operations entirely within your browser using the Web Crypto API.
+**xsukax URL Secure Messenger** is a lightweight, single-file HTML application that provides true end-to-end encryption for secure message sharing. Unlike traditional messaging platforms that rely on servers and complex infrastructure, this application performs all cryptographic operations entirely within your browser using the Web Crypto API.
 
 The application encrypts your messages using industry-standard AES-256-GCM encryption and embeds the ciphertext directly into a shareable URL. Recipients can decrypt the message by opening the URL and entering the shared password—no accounts, no servers, no data collection.
 
@@ -107,7 +107,7 @@ Open source under GPL v3.0 license. Fork it, modify it, host it yourself. You're
 Access the application directly without installation:
 
 ```
-https://xsukax.github.io/xsukax-Local-E2EE-Messenger/
+https://xsukax.github.io/xsukax-URL-Secure-Messenger/
 ```
 
 ### Method 2: Download and Run Locally
@@ -116,12 +116,12 @@ https://xsukax.github.io/xsukax-Local-E2EE-Messenger/
 
    Visit the GitHub repository and download `index.html`:
    ```bash
-   wget https://raw.githubusercontent.com/xsukax/xsukax-Local-E2EE-Messenger/main/index.html
+   wget https://raw.githubusercontent.com/xsukax/xsukax-URL-Secure-Messenger/main/index.html
    ```
 
    Or use `curl`:
    ```bash
-   curl -O https://raw.githubusercontent.com/xsukax/xsukax-Local-E2EE-Messenger/main/index.html
+   curl -O https://raw.githubusercontent.com/xsukax/xsukax-URL-Secure-Messenger/main/index.html
    ```
 
 2. **Open in your browser**
@@ -137,7 +137,7 @@ https://xsukax.github.io/xsukax-Local-E2EE-Messenger/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/xsukax/xsukax-Local-E2EE-Messenger.git
+   git clone https://github.com/xsukax/xsukax-URL-Secure-Messenger.git
    cd xsukax-Local-E2EE-Messenger
    ```
 
@@ -391,11 +391,6 @@ This project is licensed under the GNU General Public License v3.0.
 ## 🔐 Security Disclosure
 
 If you discover a security vulnerability, please email the details to the repository maintainer. Do not open public issues for security concerns.
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/xsukax/xsukax-Local-E2EE-Messenger/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/xsukax/xsukax-Local-E2EE-Messenger/discussions)
 
 ## 🙏 Acknowledgments
 
