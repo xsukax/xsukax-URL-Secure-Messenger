@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xsukax Local E2EE Messenger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <div class="container mx-auto px-4 py-12 max-w-3xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-semibold text-gray-900 mb-3">xsukax Local E2EE Messenger</h1>
+            <p class="text-gray-600">Secure message exchange via AES-256 encryption embedded in URL hashes</p>
+        </header>
+
+        <div id="encrypt-view" class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Encrypt Message</h2>
+            
+            <div class="mb-6">
+                <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                <textarea id="message" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" placeholder="Enter your secret message..."></textarea>
+            </div>
+
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input type="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter encryption password">
+                <p class="mt-2 text-sm text-gray-500">Use a strong password. It will be needed to decrypt the message.</p>
+            </div>
+
+            <button id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Generate Secure Link
+            </button>
+        </div>
+
+        <div id="result-view" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Secure Link Generated</h2>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Encrypted URL</label>
+                <div class="flex">
+                    <input type="text" id="encrypted-url" readonly class="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-l-md text-gray-700 text-sm">
+                    <button id="copy-btn" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-r-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                        Copy
+                    </button>
+                </div>
+            </div>
+
+            <button id="new-msg-btn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                Create New Message
+            </button>
+        </div>
+
+        <div id="decrypt-view" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Decrypt Message</h2>
+            
+            <div class="mb-6">
+                <label for="decrypt-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input type="password" id="decrypt-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter decryption password">
+            </div>
+
+            <button id="decrypt-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mb-4">
+                Show Message
+            </button>
+
+            <div id="decrypted-message" class="hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Decrypted Message</label>
+                <div class="bg-gray-50 border border-gray-200 rounded-md p-4 mb-4">
+                    <p id="message-content" class="text-gray-900 whitespace-pre-wrap"></p>
+                </div>
+                <button id="create-new-btn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    Create New Message
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-10 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 class="text-sm font-semibold text-blue-900 mb-3">Security Information</h3>
+            <ul class="text-sm text-blue-800 space-y-2">
+                <li>• All encryption happens locally in your browser using AES-256-GCM</li>
+                <li>• Messages are never sent to any server</li>
+                <li>• The encrypted data is embedded in the URL hash</li>
+                <li>• Share the URL and password through separate secure channels</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+            
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-md shadow-lg transform transition-all duration-300 ease-in-out translate-x-full opacity-0`;
+            toast.textContent = message;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function arrayBufferToBase64(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        }
+
+        function base64ToArrayBuffer(base64) {
+            base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4) {
+                base64 += '=';
+            }
+            const binary = atob(base64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        async function deriveKey(password, salt) {
+            const encoder = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(password),
+                'PBKDF2',
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+
+            return crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['encrypt', 'decrypt']
+            );
+        }
+
+        async function encryptMessage(message, password) {
+            const encoder = new TextEncoder();
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            
+            const key = await deriveKey(password, salt);
+            const encrypted = await crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv: iv },
+                key,
+                encoder.encode(message)
+            );
+
+            const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+            combined.set(salt, 0);
+            combined.set(iv, 16);
+            combined.set(new Uint8Array(encrypted), 28);
+
+            return arrayBufferToBase64(combined.buffer);
+        }
+
+        async function decryptMessage(encryptedData, password) {
+            const combined = new Uint8Array(base64ToArrayBuffer(encryptedData));
+            const salt = combined.slice(0, 16);
+            const iv = combined.slice(16, 28);
+            const encrypted = combined.slice(28);
+
+            const key = await deriveKey(password, salt);
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: iv },
+                key,
+                encrypted
+            );
+
+            return new TextDecoder().decode(decrypted);
+        }
+
+        function switchView(view) {
+            document.getElementById('encrypt-view').classList.add('hidden');
+            document.getElementById('result-view').classList.add('hidden');
+            document.getElementById('decrypt-view').classList.add('hidden');
+            document.getElementById(view).classList.remove('hidden');
+        }
+
+        function checkHash() {
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                switchView('decrypt-view');
+            } else {
+                switchView('encrypt-view');
+            }
+        }
+
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const message = document.getElementById('message').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!message) {
+                showToast('Please enter a message', 'error');
+                return;
+            }
+
+            if (!password) {
+                showToast('Please enter a password', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            try {
+                const encrypted = await encryptMessage(message, password);
+                const url = `${window.location.origin}${window.location.pathname}#${encrypted}`;
+                
+                document.getElementById('encrypted-url').value = url;
+                switchView('result-view');
+                showToast('Message encrypted successfully');
+            } catch (error) {
+                showToast('Encryption failed', 'error');
+            }
+        });
+
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            const input = document.getElementById('encrypted-url');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('Link copied to clipboard');
+            });
+        });
+
+        document.getElementById('new-msg-btn').addEventListener('click', () => {
+            window.location.hash = '';
+            document.getElementById('message').value = '';
+            document.getElementById('password').value = '';
+            switchView('encrypt-view');
+        });
+
+        document.getElementById('decrypt-btn').addEventListener('click', async () => {
+            const password = document.getElementById('decrypt-password').value;
+            const hash = window.location.hash.substring(1);
+
+            if (!password) {
+                showToast('Please enter the password', 'error');
+                return;
+            }
+
+            try {
+                const decrypted = await decryptMessage(hash, password);
+                document.getElementById('message-content').textContent = decrypted;
+                document.getElementById('decrypted-message').classList.remove('hidden');
+                showToast('Message decrypted successfully');
+            } catch (error) {
+                showToast('Decryption failed. Wrong password?', 'error');
+            }
+        });
+
+        document.getElementById('create-new-btn').addEventListener('click', () => {
+            window.location.hash = '';
+            document.getElementById('decrypt-password').value = '';
+            document.getElementById('decrypted-message').classList.add('hidden');
+            switchView('encrypt-view');
+        });
+
+        window.addEventListener('hashchange', checkHash);
+        checkHash();
+    </script>
+</body>
+</html>
