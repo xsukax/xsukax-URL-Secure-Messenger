@@ -138,7 +138,7 @@ https://xsukax.github.io/xsukax-URL-Secure-Messenger/
 1. **Clone the repository**
    ```bash
    git clone https://github.com/xsukax/xsukax-URL-Secure-Messenger.git
-   cd xsukax-Local-E2EE-Messenger
+   cd xsukax-URL-Secure-Messenger
    ```
 
 2. **Serve with any web server**
